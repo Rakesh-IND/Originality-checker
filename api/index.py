@@ -6,6 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from supabase import Client
 
+import sys
+sys.path.append(os.path.dirname(__file__))
+
 from hashing import compute_dhash, compute_similarity
 from auth import get_current_user, supabase
 
