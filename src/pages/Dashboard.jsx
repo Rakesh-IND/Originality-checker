@@ -1,117 +1,153 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { LogOut, Upload, Settings } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { supabase } from '../lib/supabase';
+import { LogOut, Upload, Image as ImageIcon, CheckCircle, AlertTriangle } from 'lucide-react';
 import UploadModal from '../components/UploadModal';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export default function Dashboard({ session }) {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
 
   const fetchImages = async () => {
-    setLoading(true);
     try {
       const response = await axios.get(`${API_URL}/images`, {
-        headers: { Authorization: `Bearer ${session.access_token}` }
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
       });
       setImages(response.data);
     } catch (error) {
-      console.error("Error fetching images:", error);
+      console.error("Error fetching images", error);
+      const errMsg = error.response?.data?.detail || error.message || "Unknown error";
+      toast.error(`Failed to fetch images: ${errMsg}`);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (session) {
-      fetchImages();
-    }
+    fetchImages();
   }, [session]);
 
-  const handleLogout = async () => {
+  const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
 
-  const getPublicUrl = (storagePath) => {
-    const { data } = supabase.storage.from('photos').getPublicUrl(storagePath);
-    return data.publicUrl;
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-        <h1 className="text-xl font-bold">Originality</h1>
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setIsUploadModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Upload size={18} />
-            Upload
-          </button>
-          <button 
-            onClick={handleLogout}
-            className="p-2 text-gray-500 hover:text-gray-800 transition-colors"
-            title="Log out"
-          >
-            <LogOut size={20} />
-          </button>
-        </div>
-      </header>
-
-      <main className="p-6 max-w-7xl mx-auto">
-        {loading ? (
-          <div className="flex justify-center py-20 text-gray-500">Loading your gallery...</div>
-        ) : images.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Upload size={24} className="text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">No images yet</h3>
-            <p className="text-gray-500 mb-4">Upload some photos to start detecting duplicates.</p>
+    <div className="min-h-screen relative z-10 p-6 md:p-12">
+      <div className="max-w-7xl mx-auto">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 glass-panel p-6 rounded-2xl">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Image Library</h1>
+            <p className="text-gray-400">Manage and detect duplicate visuals</p>
+          </div>
+          <div className="flex gap-4 w-full md:w-auto">
             <button 
-              onClick={() => setIsUploadModalOpen(true)}
-              className="text-blue-600 font-medium hover:underline"
+              onClick={() => setShowUpload(true)}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]"
             >
-              Upload your first image
+              <Upload size={20} />
+              <span>Upload</span>
+            </button>
+            <button 
+              onClick={handleSignOut}
+              className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 px-6 py-3 rounded-xl font-medium transition-colors"
+            >
+              <LogOut size={20} />
+              <span className="hidden sm:inline">Sign Out</span>
             </button>
           </div>
+        </header>
+
+        {loading ? (
+          <div className="flex flex-col justify-center items-center h-64">
+            <div className="w-12 h-12 border-4 border-white/10 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-400">Loading your library...</p>
+          </div>
+        ) : images.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-panel rounded-3xl p-16 text-center flex flex-col items-center justify-center"
+          >
+            <div className="bg-white/5 p-6 rounded-full mb-6 border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+              <ImageIcon size={64} className="text-gray-500" />
+            </div>
+            <h3 className="text-2xl font-semibold text-white mb-3">No images yet</h3>
+            <p className="text-gray-400 max-w-md mx-auto mb-8 text-lg">Upload some images to start checking for originality and finding duplicates in your library.</p>
+            <button 
+              onClick={() => setShowUpload(true)}
+              className="bg-white/10 hover:bg-white/15 text-white px-8 py-3 rounded-xl font-medium border border-white/20 transition-all hover:scale-105"
+            >
+              Upload First Image
+            </button>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {images.map(img => (
-              <Link 
-                to={img.match_count > 0 ? `/compare/${img.id}` : '#'} 
-                key={img.id}
-                className={`relative group block rounded-xl overflow-hidden aspect-square bg-gray-200 shadow-sm ${img.match_count > 0 ? 'cursor-pointer hover:ring-4 hover:ring-blue-400' : 'cursor-default'}`}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {images.map((image, i) => (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.05 }}
+                key={image.id} 
+                className="group relative glass-panel rounded-2xl overflow-hidden hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all duration-500"
               >
-                <img 
-                  src={getPublicUrl(img.storage_path)} 
-                  alt={img.filename} 
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity" />
-                
-                {img.match_count > 0 && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow">
-                    {img.match_count} Match{img.match_count > 1 ? 'es' : ''}
+                <div className="aspect-square bg-black/40 relative overflow-hidden">
+                  {/* Public URL mapping assuming 'photos' bucket */}
+                  <img 
+                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/photos/${image.storage_path}`}
+                    alt={image.filename}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/400x400?text=Image+Not+Found';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80"></div>
+                  
+                  {/* Matches Badge */}
+                  {image.matches && image.matches.length > 0 ? (
+                    <div className="absolute top-3 left-3 bg-red-500/90 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium shadow-[0_0_15px_rgba(239,68,68,0.5)] border border-red-400/30">
+                      <AlertTriangle size={14} />
+                      {image.matches.length} Match{image.matches.length > 1 ? 'es' : ''}
+                    </div>
+                  ) : (
+                    <div className="absolute top-3 left-3 bg-emerald-500/90 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-emerald-400/30">
+                      <CheckCircle size={14} />
+                      Original
+                    </div>
+                  )}
+                </div>
+                <div className="p-5">
+                  <h3 className="font-medium text-gray-200 truncate mb-1" title={image.filename}>{image.filename}</h3>
+                  <div className="flex justify-between items-center text-sm text-gray-500 mb-4">
+                    <span>{(image.file_size / 1024 / 1024).toFixed(2)} MB</span>
+                    <span>{new Date(image.uploaded_at).toLocaleDateString()}</span>
                   </div>
-                )}
-              </Link>
+                  
+                  <Link 
+                    to={`/compare/${image.id}`}
+                    className="block w-full py-2.5 text-center text-sm font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-xl transition-colors"
+                  >
+                    Analyze Details
+                  </Link>
+                </div>
+              </motion.div>
             ))}
           </div>
         )}
-      </main>
+      </div>
 
-      {isUploadModalOpen && (
+      {showUpload && (
         <UploadModal 
           session={session} 
-          onClose={() => setIsUploadModalOpen(false)} 
-          onUploadComplete={fetchImages} 
+          onClose={() => setShowUpload(false)} 
+          onUploadComplete={fetchImages}
         />
       )}
     </div>
