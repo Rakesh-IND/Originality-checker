@@ -50,7 +50,7 @@ export default function Dashboard({ session }) {
           <div className="flex gap-4 w-full md:w-auto">
             <button 
               onClick={() => setShowUpload(true)}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]"
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]"
             >
               <Upload size={20} />
               <span>Upload</span>
@@ -108,7 +108,7 @@ export default function Dashboard({ session }) {
                       e.target.src = 'https://via.placeholder.com/400x400?text=Image+Not+Found';
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80"></div>
+                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80"></div>
                   
                   {/* Matches Badge */}
                   {image.matches && image.matches.length > 0 ? (

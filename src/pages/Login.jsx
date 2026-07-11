@@ -45,9 +45,9 @@ export default function Login() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md"
       >
-        <div className="glass-panel p-10 rounded-[2rem] shadow-[0_0_50px_rgba(59,130,246,0.1)] border-t border-l border-white/20">
+        <div className="glass-panel p-10 rounded-4xl shadow-[0_0_50px_rgba(59,130,246,0.1)] border-t border-l border-white/20">
           <div className="flex flex-col items-center mb-10">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.4)]">
+            <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.4)]">
               <Fingerprint size={32} className="text-white" />
             </div>
             <h2 className="text-3xl font-bold text-white tracking-tight mb-2">Originality Checker</h2>
@@ -81,7 +81,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-medium transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] disabled:opacity-70 flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-medium transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] disabled:opacity-70 flex items-center justify-center gap-2"
             >
               {loading && <Loader2 size={18} className="animate-spin" />}
               {isSignUp ? 'Create Account' : 'Sign In'}
