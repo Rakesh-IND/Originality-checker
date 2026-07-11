@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { supabase } from '../lib/supabase';
-import { LogOut, Upload, Image as ImageIcon, CheckCircle, AlertTriangle } from 'lucide-react';
+import { LogOut, Upload, Image as ImageIcon, CheckCircle, AlertTriangle, Trash2 } from 'lucide-react';
 import UploadModal from '../components/UploadModal';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -37,6 +37,23 @@ export default function Dashboard({ session }) {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+  };
+
+  const handleDelete = async (imageId) => {
+    if (!window.confirm("Are you sure you want to delete this image?")) return;
+    try {
+      await axios.delete(`${API_URL}/images/${imageId}`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+      setImages(images.filter(img => img.id !== imageId));
+      toast.success("Image deleted successfully");
+    } catch (error) {
+      console.error("Error deleting image", error);
+      const errMsg = error.response?.data?.detail || error.message || "Unknown error";
+      toast.error(`Failed to delete image: ${errMsg}`);
+    }
   };
 
   return (
@@ -130,12 +147,21 @@ export default function Dashboard({ session }) {
                     <span>{new Date(image.uploaded_at).toLocaleDateString()}</span>
                   </div>
                   
-                  <Link 
-                    to={`/compare/${image.id}`}
-                    className="block w-full py-2.5 text-center text-sm font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-xl transition-colors"
-                  >
-                    Analyze Details
-                  </Link>
+                  <div className="flex gap-2">
+                    <Link 
+                      to={`/compare/${image.id}`}
+                      className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg transition-colors text-center border border-white/5"
+                    >
+                      Analyze Details
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(image.id)}
+                      className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors border border-red-500/20"
+                      title="Delete Image"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ))}

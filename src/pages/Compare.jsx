@@ -174,19 +174,19 @@ export default function Compare({ session }) {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
-                      key={match.id} 
+                      key={match.image.id} 
                       className="flex flex-col sm:flex-row gap-6 p-5 bg-black/20 rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
                     >
                       <div className="w-full sm:w-48 aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10 shrink-0">
                         <img 
-                          src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/photos/${match.storage_path}`}
-                          alt={match.filename}
+                          src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/photos/${match.image.storage_path}`}
+                          alt={match.image.filename}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1 flex flex-col justify-center">
                         <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-medium text-gray-200 text-lg truncate pr-4">{match.filename}</h4>
+                          <h4 className="font-medium text-gray-200 text-lg truncate pr-4">{match.image.filename}</h4>
                           <span className={`px-3 py-1 text-sm font-bold rounded-lg border ${
                             match.similarity >= 95 
                               ? 'bg-red-500/20 text-red-400 border-red-500/30 shadow-[0_0_10px_rgba(239,68,68,0.3)]' 
@@ -196,9 +196,9 @@ export default function Compare({ session }) {
                           </span>
                         </div>
                         <div className="space-y-1 text-sm text-gray-500 mt-2">
-                          <p>Added: {new Date(match.uploaded_at).toLocaleDateString()}</p>
-                          <p>Size: {(match.file_size / 1024 / 1024).toFixed(2)} MB</p>
-                          <p className="font-mono text-xs mt-2 bg-black/30 p-2 rounded block">Hash: {match.dhash}</p>
+                          <p>Added: {new Date(match.image.uploaded_at).toLocaleDateString()}</p>
+                          <p>Size: {(match.image.file_size / 1024 / 1024).toFixed(2)} MB</p>
+                          <p className="font-mono text-xs mt-2 bg-black/30 p-2 rounded block">Hash: {match.image.dhash}</p>
                         </div>
                       </div>
                     </motion.div>
