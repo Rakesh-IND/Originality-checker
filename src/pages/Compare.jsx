@@ -4,7 +4,7 @@ import { ArrowLeft, Trash2, SlidersHorizontal } from 'lucide-react';
 import axios from 'axios';
 import { supabase } from '../lib/supabase';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export default function Compare({ session }) {
   const { id } = useParams();

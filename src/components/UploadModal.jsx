@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { X, UploadCloud } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export default function UploadModal({ session, onClose, onUploadComplete }) {
   const [files, setFiles] = useState([]);
