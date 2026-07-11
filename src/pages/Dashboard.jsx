@@ -111,10 +111,10 @@ export default function Dashboard({ session }) {
                   <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80"></div>
                   
                   {/* Matches Badge */}
-                  {image.matches && image.matches.length > 0 ? (
-                    <div className="absolute top-3 left-3 bg-red-500/90 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium shadow-[0_0_15px_rgba(239,68,68,0.5)] border border-red-400/30">
+                  {image.match_count > 0 ? (
+                    <div className="absolute top-4 right-4 bg-red-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center gap-1.5">
                       <AlertTriangle size={14} />
-                      {image.matches.length} Match{image.matches.length > 1 ? 'es' : ''}
+                      {image.match_count} Matches
                     </div>
                   ) : (
                     <div className="absolute top-3 left-3 bg-emerald-500/90 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-emerald-400/30">

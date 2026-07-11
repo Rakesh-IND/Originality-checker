@@ -133,7 +133,7 @@ async def list_images(user: dict = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database fetch failed: {str(e)}")
 
-@app.get("/api/images/{image_id}/matches", response_model=List[MatchResponse])
+@app.get("/api/images/{image_id}/matches", response_model=dict)
 async def get_matches(
     image_id: str, 
     threshold: float = 90.0, 
@@ -162,7 +162,10 @@ async def get_matches(
                 
         # Sort by similarity descending
         matches.sort(key=lambda x: x.similarity, reverse=True)
-        return matches
+        return {
+            "target": target_image,
+            "matches": matches
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
